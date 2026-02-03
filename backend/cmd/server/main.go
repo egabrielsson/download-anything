@@ -29,7 +29,10 @@ func main() {
 	}
 
 	// Routes
-	mux.HandleFunc("/api/download", corsHandler(handlers.DownloadAudio))
+	mux.HandleFunc("/api/download", corsHandler(handlers.DownloadAudio)) // Legacy
+	mux.HandleFunc("/api/instagram", corsHandler(handlers.DownloadInstagram))
+	mux.HandleFunc("/api/youtube", corsHandler(handlers.DownloadYouTube))
+	mux.HandleFunc("/api/tiktok", corsHandler(handlers.DownloadTikTok))
 	mux.HandleFunc("/api/health", corsHandler(handlers.Health))
 
 	// Start server
