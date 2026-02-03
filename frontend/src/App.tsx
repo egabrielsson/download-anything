@@ -1,122 +1,128 @@
-import { useState } from "react";
+interface DownloadSectionProps {
+  title: string;
+  placeholder: string;
+  onDownload: (url: string) => void;
+}
 
-function App() {
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+function DownloadSection({
+  title,
+  placeholder,
+  onDownload,
+}: DownloadSectionProps) {
+  return (
+    <div className="border-2 border-[#808080] bg-[#c0c0c0] p-2">
+      <div className="bg-gradient-to-r from-[#000080] to-[#1084d0] px-2 py-1 mb-2">
+        <span className="text-white text-sm font-bold">{title}</span>
+      </div>
+      <input
+        type="text"
+        placeholder={placeholder}
+        className="w-full px-2 py-1 border-2 border-t-[#808080] border-l-[#808080] border-b-white border-r-white bg-white text-black text-sm font-mono mb-2"
+      />
+      <button
+        onClick={() => onDownload("")}
+        className="w-full px-4 py-1 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-black text-sm font-bold active:border-t-[#808080] active:border-l-[#808080] active:border-b-white active:border-r-white"
+      >
+        Download
+      </button>
+    </div>
+  );
+}
 
-  const handleDownload = async () => {
-    if (!url.trim()) {
-      setError("Please enter a URL");
-      return;
-    }
+interface PlatformColumnProps {
+  platform: string;
+  color: string;
+}
 
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("/api/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url: url.trim() }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to download");
-      }
-
-      // Get the blob and download it
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-
-      // Extract filename from Content-Disposition header or use default
-      const contentDisposition = response.headers.get("Content-Disposition");
-      let filename = "instagram_audio.mp3";
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="(.+)"/);
-        if (match) filename = match[1];
-      }
-
-      // Create download link and click it
-      const a = document.createElement("a");
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(downloadUrl);
-
-      setUrl("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
+function PlatformColumn({ platform, color }: PlatformColumnProps) {
+  const handleDownload = (type: string) => {
+    console.log(`[${platform}] Download ${type} - Not implemented yet`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
-          🎵 Reel Audio Downloader
-        </h1>
-        <p className="text-white/70 text-center mb-8">
-          Paste an Instagram Reel URL to download its audio
-        </p>
-
-        <div className="space-y-4">
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://www.instagram.com/reel/..."
-            className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
-            onKeyDown={(e) => e.key === "Enter" && handleDownload()}
-          />
-
-          {error && (
-            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm">
-              {error}
-            </div>
-          )}
-
-          <button
-            onClick={handleDownload}
-            disabled={loading}
-            className="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Downloading...
-              </span>
-            ) : (
-              "⬇️ Download Audio"
-            )}
+    <div className="border-2 border-t-white border-l-white border-b-[#808080] border-r-[#808080] bg-[#c0c0c0]">
+      {/* Title Bar */}
+      <div className={`${color} px-2 py-1 flex items-center justify-between`}>
+        <span className="text-white text-sm font-bold">{platform}</span>
+        <div className="flex gap-1">
+          <button className="w-4 h-4 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-[10px] leading-none">
+            _
+          </button>
+          <button className="w-4 h-4 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-[10px] leading-none">
+            x
           </button>
         </div>
+      </div>
 
-        <p className="text-white/40 text-xs text-center mt-6">
-          Works with Instagram Reels and Posts
-        </p>
+      {/* Content */}
+      <div className="p-3 space-y-3">
+        <DownloadSection
+          title="Download Audio"
+          placeholder="Paste URL here..."
+          onDownload={() => handleDownload("audio")}
+        />
+        <DownloadSection
+          title="Download Video"
+          placeholder="Paste URL here..."
+          onDownload={() => handleDownload("video")}
+        />
+        <DownloadSection
+          title="Download Both"
+          placeholder="Paste URL here..."
+          onDownload={() => handleDownload("both")}
+        />
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div className="min-h-screen bg-[#008080] p-4">
+      {/* Main Window */}
+      <div className="max-w-6xl mx-auto border-2 border-t-white border-l-white border-b-[#808080] border-r-[#808080] bg-[#c0c0c0]">
+        {/* Window Title Bar */}
+        <div className="bg-gradient-to-r from-[#000080] to-[#1084d0] px-2 py-1 flex items-center justify-between">
+          <span className="text-white font-bold">Download Anything</span>
+          <div className="flex gap-1">
+            <button className="w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-xs leading-none">
+              _
+            </button>
+            <button className="w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-xs leading-none">
+              []
+            </button>
+            <button className="w-5 h-5 bg-[#c0c0c0] border border-t-white border-l-white border-b-[#808080] border-r-[#808080] text-xs leading-none font-bold">
+              X
+            </button>
+          </div>
+        </div>
+
+        {/* Menu Bar */}
+        <div className="bg-[#c0c0c0] border-b border-[#808080] px-1 py-1">
+          <span className="px-2 text-sm">File</span>
+          <span className="px-2 text-sm">Edit</span>
+          <span className="px-2 text-sm">View</span>
+          <span className="px-2 text-sm">Help</span>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <PlatformColumn platform="YouTube" color="bg-[#cc0000]" />
+            <PlatformColumn
+              platform="Instagram"
+              color="bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045]"
+            />
+            <PlatformColumn platform="TikTok" color="bg-black" />
+          </div>
+        </div>
+
+        {/* Status Bar */}
+        <div className="border-t-2 border-[#808080] bg-[#c0c0c0] px-2 py-1 flex">
+          <div className="border border-t-[#808080] border-l-[#808080] border-b-white border-r-white px-2 flex-1">
+            <span className="text-sm">Ready</span>
+          </div>
+        </div>
       </div>
     </div>
   );
