@@ -15,5 +15,6 @@ export default defineConfig({
   preview: {
     port: 4173,
     host: "0.0.0.0",
+    allowedHosts: ["download-anything-production-ca93.up.railway.app"],
   },
 });
