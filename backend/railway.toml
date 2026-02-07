@@ -2,9 +2,9 @@
 builder = "nixpacks"
 
 [build.nixpacksPlan.phases.setup]
-nixPkgs = ["yt-dlp", "ffmpeg"]
+nixPkgs = ["go", "yt-dlp", "ffmpeg"]
 
 [deploy]
-startCommand = "cd backend && go run ./cmd/server"
+startCommand = "./out"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 30
